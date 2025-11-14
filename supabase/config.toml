@@ -1,0 +1,37 @@
+# Supabase Configuration File
+# https://supabase.com/docs/guides/cli/config
+
+[api]
+# API 포트 (로컬 개발용)
+port = 54321
+# API 스키마
+schemas = ["public", "storage"]
+# Extra search path
+extra_search_path = ["extensions"]
+
+[db]
+# 데이터베이스 포트 (로컬 개발용)
+port = 54322
+
+[studio]
+# Supabase Studio 포트 (로컬 개발용)
+port = 54323
+
+[inbucket]
+# Inbucket 포트 (이메일 테스트용)
+port = 54324
+
+[auth]
+# Auth 관련 설정
+enabled = true
+site_url = "http://localhost:3000"
+
+[auth.email]
+# 이메일 인증 설정
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = false
+
+[functions.attendance-bot]
+# JWT 검증 비활성화 (Google Chat 봇은 authorization 헤더를 보내지 않음)
+verify_jwt = false

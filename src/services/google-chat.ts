@@ -2,11 +2,9 @@ import { GoogleChatMessage, WorkingHoursResult } from '../types';
 import { config } from '../config/env';
 
 class GoogleChatService {
-  private dailyScrumWebhookUrl: string;
   private attendanceWebhookUrl: string;
 
   constructor() {
-    this.dailyScrumWebhookUrl = config.googleChat.dailyScrumWebhookUrl;
     this.attendanceWebhookUrl = config.googleChat.attendanceWebhookUrl;
   }
 
@@ -32,32 +30,6 @@ class GoogleChatService {
       }
       throw error;
     }
-  }
-
-  async sendDailyScrumReminder(): Promise<void> {
-    const message: GoogleChatMessage = {
-      cards: [
-        {
-          header: {
-            title: '📋 데일리 스크럼 알림',
-            subtitle: '오늘의 스크럼을 작성해주세요!',
-          },
-          sections: [
-            {
-              widgets: [
-                {
-                  textParagraph: {
-                    text: '<b>안녕하세요!</b>\n\n오늘의 데일리 스크럼을 작성할 시간입니다.\n\n• 어제 한 일\n• 오늘 할 일\n• 이슈 사항',
-                  },
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    };
-
-    await this.sendMessage(this.dailyScrumWebhookUrl, message);
   }
 
   async sendAttendanceMessage(message: GoogleChatMessage): Promise<void> {

@@ -28,3 +28,8 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+
+# Supabase
+.supabase/
+supabase/.branches/
+supabase/.temp/

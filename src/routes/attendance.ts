@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { supabaseService } from '../services/supabase';
-import { googleChatService } from '../services/googleChat';
+import { googleChatService } from '../services/google-chat';
 import { GoogleChatEvent, AttendanceRecord } from '../types';
 
 const router = Router();
@@ -9,8 +9,14 @@ router.post('/bot', async (req: Request, res: Response) => {
   try {
     const event: GoogleChatEvent = req.body;
 
-    if (event.type === 'MESSAGE') {
-      const message = event.message.text.trim();
+    if (event.type === 'ADDED_TO_SPACE') {
+      return res.status(200).json({
+        text: '안녕하세요! 출퇴근 관리 봇입니다. 👋\n\n사용 가능한 명령어:\n• `/출근` - 출근 처리\n• `/퇴근` - 퇴근 처리 및 근무 시간 계산\n• `/휴식` - 휴식 시작 (다시 `/출근`으로 업무 재개)',
+      });
+    }
+
+    if (event.type === 'MESSAGE' && event.message) {
+      const message = (event.message.slashCommand?.commandName || event.message.text || '').trim();
       const userId = event.message.sender.name;
       const userName = event.message.sender.displayName;
 
@@ -18,16 +24,13 @@ router.post('/bot', async (req: Request, res: Response) => {
         const lastRecord = await supabaseService.getLastRecord(userId);
         const todayAttendance = await supabaseService.getTodayAttendance(userId);
 
-        // 오늘 이미 출근 처리가 되어있는지 확인 (휴식 후 복귀는 제외)
         const hasCheckedInToday = todayAttendance.some(
           (record) => record.type === 'check-in'
         );
 
-        // 현재 휴식 중인지 확인
         const isOnBreak = lastRecord?.type === 'break-start';
 
         if (isOnBreak) {
-          // 휴식 중이면 휴식 종료 (업무 재개)
           const timestamp = new Date();
           const record: AttendanceRecord = {
             user_id: userId,
@@ -53,7 +56,6 @@ router.post('/bot', async (req: Request, res: Response) => {
           });
         }
 
-        // 일반 출근 처리
         const timestamp = new Date();
         const record: AttendanceRecord = {
           user_id: userId,
@@ -92,8 +94,8 @@ router.post('/bot', async (req: Request, res: Response) => {
           });
         }
 
-        // 휴식 시작
         const timestamp = new Date();
+
         const record: AttendanceRecord = {
           user_id: userId,
           user_name: userName,
@@ -137,8 +139,8 @@ router.post('/bot', async (req: Request, res: Response) => {
           });
         }
 
-        // 퇴근 처리
         const timestamp = new Date();
+
         const record: AttendanceRecord = {
           user_id: userId,
           user_name: userName,
@@ -148,7 +150,6 @@ router.post('/bot', async (req: Request, res: Response) => {
 
         await supabaseService.saveAttendance(record);
 
-        // 오늘의 전체 출퇴근 기록을 가져와서 근무 시간 계산
         const allTodayRecords = await supabaseService.getTodayAttendance(userId);
         const workingHours = supabaseService.calculateWorkingHours(allTodayRecords);
 
@@ -165,7 +166,6 @@ router.post('/bot', async (req: Request, res: Response) => {
 
     return res.status(200).json({});
   } catch (error) {
-    console.error('Error processing attendance:', error);
     return res.status(200).json({
       text: '❌ 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
     });

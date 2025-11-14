@@ -52,8 +52,12 @@ export interface GoogleChatWidget {
 
 export interface GoogleChatEvent {
   type: string;
-  message: {
-    text: string;
+  message?: {
+    text?: string;
+    slashCommand?: {
+      commandId?: string;
+      commandName?: string;
+    };
     sender: {
       name: string;
       displayName: string;
