@@ -35,3 +35,14 @@ enable_confirmations = false
 [functions.attendance-bot]
 # JWT 검증 비활성화 (Google Chat 봇은 authorization 헤더를 보내지 않음)
 verify_jwt = false
+
+[functions.attendance-bot-function]
+enabled = true
+verify_jwt = true
+import_map = "./functions/attendance-bot-function/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/attendance-bot-function/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/attendance-bot-function/*.html" ]

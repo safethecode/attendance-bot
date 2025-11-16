@@ -1,5 +1,3 @@
-/// <reference path="./deno.d.ts" />
-
 // @ts-ignore: Deno module
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -53,7 +51,9 @@ interface GoogleChatEvent {
   };
 }
 
+// @ts-ignore: Deno module
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+// @ts-ignore: Deno module
 const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -383,6 +383,7 @@ async function saveRequestLog(req: Request, text: string, bodyJson: any = null, 
   }
 }
 
+// @ts-ignore: Deno module
 Deno.serve(async (req: Request) => {
   try {
     if (req.method === 'GET' || req.method === 'HEAD') {
