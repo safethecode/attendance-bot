@@ -14,7 +14,15 @@ app.get('/', (req: Request, res: Response) => {
     message: 'Google Chat Bot API',
     endpoints: {
       attendance: 'POST /api/attendance/bot',
+      health: 'GET /health',
     },
+  });
+});
+
+app.get('/health', (req: Request, res: Response) => {
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
   });
 });
 
